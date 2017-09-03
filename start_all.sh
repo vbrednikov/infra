@@ -1,11 +1,6 @@
 #!/bin/bash
 
-# Local:
-#  gcloud compute instances create --boot-disk-size=10GB --image=ubuntu-1604-xenial-v20170815a --image-project=ubuntu-os-cloud --machine-type=g1-small --tags puma-server --restart-on-failure --zone=europe-west1-b --metadata-from-file startup-script=start_all.sh reddit-app
-# From github:
-#  gcloud compute instances create --boot-disk-size=10GB --image=ubuntu-1604-xenial-v20170815a --image-project=ubuntu-os-cloud --machine-type=g1-small --tags puma-server --restart-on-failure --zone=europe-west1-b --metadata startup-script-url=https://github.com/vbrednikov/infra/start_all.sh
-
-
+# See README.md for usage examples
 
 # Small optimization: add mongodb repo before all steps to run apt-get update once
 
