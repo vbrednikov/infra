@@ -21,3 +21,13 @@ gcloud compute instances create \
           reddit-app
 ```
 
+**From baked image**
+
+```
+gcloud compute instances create \
+          --boot-disk-size=10GB --image=reddit-base-1504648314 \
+          --image-project=week-3-178421 --machine-type=g1-small \
+          --tags puma-server --restart-on-failure --zone=europe-west1-b \
+          --metadata-from-file startup-script=deploy.sh \
+          reddit-app
+```
