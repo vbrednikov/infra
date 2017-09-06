@@ -1,5 +1,11 @@
 # infra
 
+**Baking the image with packer**
+
+```
+packer build --var gc_project_id=week-3-178421 --var gc_machine_type=f1-micro --var gc_source_image=ubuntu-1604-xenial-v20170815a  ubuntu16.json
+```
+
 **Local** 
 ```
 gcloud compute instances create \
