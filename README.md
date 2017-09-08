@@ -51,7 +51,6 @@ gcloud compute instances create \
 
 Bake the image with packer and then deploying it with gcloud. Use `gcloud inspect ubuntu16.json` to examine all available user variables that can be overrided.
 
-
 In the examples below, project id and zone user variables are extracted from default gcloud settings.
 
 **Bake the image**
@@ -69,5 +68,26 @@ gcloud compute instances create \
           --boot-disk-size=10GB --machine-type=g1-small \
           --tags puma-server --restart-on-failure --zone=europe-west1-b \
           --metadata-from-file startup-script=deploy.sh \
+          reddit-app
+```
+
+## Packer - complete image
+
+Bake the image with the application and all its dependencies installed. No startup script is required since puma.service is started automatically.
+By default, it creates image of family reddit-app, instead of reddit-app-base, as in previous example.
+
+**Bake the image**
+```
+project_id=$(gcloud info --format=flattened|grep config.project:|awk '{print $2}') ; \
+zone=$(gcloud info --format=flattened|grep config.properties.compute.zone:|awk '{print $2}') ; \
+packer build --var project_id=$project_id --var zone=${zone:-europe-west-1b} --var machine_type=f1-micro  packer/immutable.json
+```
+
+**Run an instance**
+```
+gcloud compute instances create \
+          --image-family=reddit-app \
+          --boot-disk-size=10GB --machine-type=g1-small \
+          --tags puma-server --restart-on-failure --zone=europe-west1-b \
           reddit-app
 ```
