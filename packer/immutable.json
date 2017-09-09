@@ -42,11 +42,11 @@
         },
         {
             "type": "shell",
-            "script": "{{template_dir}}/files/install_app.sh"
+            "script": "{{template_dir}}/../scripts/install_app.sh"
         },
         {
             "type": "file",
-            "source": "{{template_dir}}/files/puma.service",
+            "source": "{{template_dir}}/../files/puma.service",
             "destination": "/home/appuser/puma.service"
         },
         {
