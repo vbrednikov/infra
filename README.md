@@ -5,6 +5,7 @@ This repo contains configuration to prepare and run sample reddit-app project in
 There are several ways to start and deploy the instances:
 - "fry" base ubuntu/debian image with shell scripts: install ruby, mongodb, app to base version
 - prepare "baked" images with builtin app dependencies using packer
+- using terraform
 - to be continued ...
 
 ## Prerequisites
@@ -93,3 +94,13 @@ gcloud compute instances create \
           --tags puma-server --restart-on-failure --zone=europe-west1-b \
           reddit-app
 ```
+
+## Terraform
+
+1. [Download terraform binary for your OS](https://www.terraform.io/downloads.html)  and put it to any folder mentioned in your $PATH (e.g., ~/bin).
+
+2. Bake a reddit-app-base image using ubuntu16.json (see above)
+
+3. In the repo's `terraform` folder, copy terraform.tfvars.example to terraform.tfvars and set correct variables `project`, `disk_image` and key paths for your project.
+
+4. In the `terraform` folder, run `terraform plan`, `terraform apply`.
