@@ -11,4 +11,4 @@ rvm use 2.4.1 --default
 gem install bundler -V --no-ri --no-rdoc
 # output ruby and bundler versions to syslog
 echo -n Ruby version:\ ; ruby -v
-echo -n Bundler version:\ ; gem -v bundler
+echo -n Bundler version:\ ; bundle -v

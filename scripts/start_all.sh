@@ -21,7 +21,7 @@ sudo -u "appuser" bash -c 'gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B
     rvm use 2.4.1 --default && \
     gem install bundler -V --no-ri --no-rdoc'
 # output ruby and bundler versions to syslog
-sudo -u "appuser" bash -c '. ~/.rvm/scripts/rvm; echo -n Ruby version:\ ; ruby -v; echo -n Bundler version:\ ; gem -v bundler'
+sudo -u "appuser" bash -c '. ~/.rvm/scripts/rvm; echo -n Ruby version:\ ; ruby -v; echo -n Bundler version:\ ; bundle -v'
 
 echo '--------- Install mongodb ----------'
 apt-get install -y mongodb-org 
