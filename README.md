@@ -103,4 +103,4 @@ gcloud compute instances create \
 
 3. In the repo's `terraform` folder, copy terraform.tfvars.example to terraform.tfvars and set correct variables `project`, `disk_image` and key paths for your project.
 
-4. In the `terraformz folder, run `terraform plan`, `terraform apply`.
+4. In the `terraform` folder, run `terraform plan`, `terraform apply`.
