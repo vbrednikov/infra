@@ -4,6 +4,13 @@ provider "aws" {
   secret_key = "${var.aws_secret_key}"
 }
 
+data "aws_ami" "reddit_base_ami" {
+  most_recent = true
+  name_regex="^reddit-base-.*"
+  owners = ["self"]
+}
+
+
 resource "aws_security_group" "reddit_app" {
   name        = "reddit_app"
   description = "Allow inbound connections to TCP:9292 (puma server) and TCP:22 (ssh)"
@@ -42,8 +49,8 @@ resource "aws_instance" "reddit_app" {
 
   security_groups = ["${aws_security_group.reddit_app.name}"]
   instance_type   = "t2.micro"
-  ami             = "${var.ami}"
-  key_name         = "${aws_key_pair.auth.id}"
+  ami             = "${data.aws_ami.reddit_base_ami.id}"
+  key_name        = "${aws_key_pair.auth.id}"
 
   connection {
     type        = "ssh"

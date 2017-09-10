@@ -23,6 +23,3 @@ variable "aws_private_key_path" {
     description="AWS private key path"
 }
 
-variable "ami" {
-    description="AWS AMI id (packer-baked)"
-}
