@@ -6,10 +6,9 @@ provider "aws" {
 
 data "aws_ami" "reddit_base_ami" {
   most_recent = true
-  name_regex="^reddit-base-.*"
-  owners = ["self"]
+  name_regex  = "^reddit-base-.*"
+  owners      = ["self"]
 }
-
 
 resource "aws_security_group" "reddit_app" {
   name        = "reddit_app"
@@ -68,4 +67,3 @@ resource "aws_instance" "reddit_app" {
     script = "files/deploy.sh"
   }
 }
-
