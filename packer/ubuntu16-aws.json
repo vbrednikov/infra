@@ -1,0 +1,41 @@
+{
+    "variables": {
+        "access_key": null,
+        "secret_key": null,
+        "instance_type": "t2.micro",
+        "region": "us-east-1",
+        "source_ami": "ami-2757f631"
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "access_key": "{{user `access_key`}}",
+            "secret_key": "{{user `secret_key`}}",
+            "ami_name": "reddit-base-{{isotime `20060102-150405`}}",
+            "instance_type": "{{user `instance_type`}}",
+            "region": "{{user `region`}}",
+            "source_ami_filter": {
+        	    "filters": {
+					"virtualization-type": "hvm",
+					"name": "*ubuntu-xenial-16.04-amd64-server-*",
+					"root-device-type": "ebs"
+				},
+				"owners": ["099720109477"],
+				"most_recent": true
+			},
+            "ami_groups": "all",
+            "ssh_username": "ubuntu"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "{{template_dir}}/../scripts/install_ruby.sh"
+        },
+        {
+            "type": "shell",
+            "script": "{{template_dir}}/../scripts/install_mongodb.sh",
+            "execute_command": "sudo {{.Path}}"
+        }
+    ]
+}

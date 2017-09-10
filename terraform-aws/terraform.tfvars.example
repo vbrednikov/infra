@@ -1,0 +1,6 @@
+aws_region="us-east-1"
+aws_access_key="AWS_ACCESS_KEY"
+aws_secret_key="AWS_SECRET_KEY"
+aws_key_name="AWS_KEY_NAME"
+aws_public_key_path="PATH_TO_AWS_PUBLIC_KEY"
+aws_private_key_path="PATH_TO_AWS_PRIVATE_PEM"
