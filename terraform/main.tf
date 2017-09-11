@@ -15,7 +15,7 @@ resource "google_compute_instance" "app" {
 
   boot_disk {
     initialize_params {
-      image = "${var.disk_image}"
+      image = "${var.project}/${var.disk_image_family}"
     }
   }
 
