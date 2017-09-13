@@ -104,3 +104,25 @@ gcloud compute instances create \
 3. In the repo's `terraform` folder, copy terraform.tfvars.example to terraform.tfvars and set correct variables `project`, `disk_image` and key paths for your project.
 
 4. In the `terraform` folder, run `terraform plan`, `terraform apply`.
+
+
+## Packer - separate images
+
+In this variant MongoDB and Reddit-app are deployed on separate instances that should be deployed from packer-baked images reddit-mongodb-base and reddit-app-base.
+
+### Baking the images
+
+Run the commands simultaneously in different console windows:
+
+```
+project_id=$(gcloud info --format=flattened|grep config.project:|awk '{print $2}') ; \
+zone=$(gcloud info --format=flattened|grep config.properties.compute.zone:|awk '{print $2}') ; \
+packer build --var project_id=$project_id --var zone=${zone:-europe-west-1b} --var machine_type=f1-micro  packer/db.json 
+```
+
+```
+project_id=$(gcloud info --format=flattened|grep config.project:|awk '{print $2}') ; \
+zone=$(gcloud info --format=flattened|grep config.properties.compute.zone:|awk '{print $2}') ; \
+packer build --var project_id=$project_id --var zone=${zone:-europe-west-1b} --var machine_type=f1-micro  packer/app.json 
+```
+```

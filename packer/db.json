@@ -1,0 +1,40 @@
+{
+    "variables": {
+        "project_id": null,
+        "machine_type": null,
+        "zone": null,
+        "image_name": "reddit-mongodb",
+        "source_image_family": "ubuntu-1604-lts",
+        "source_image_project_id": "ubuntu-os-cloud",
+        "disk_size": "10",
+        "disk_type": "pd-standard",
+        "network": "default",
+        "image_description": "Packer-baked image with mongodb to run reddit-app",
+        "tags":"mongodb,reddit-app-base"
+    },
+    "builders": [
+        {
+            "type": "googlecompute",
+            "project_id": "{{user `project_id`}}",
+            "machine_type": "{{user `machine_type`}}",
+            "zone": "{{user `zone`}}",
+            "image_name": "{{user `image_name`}}-{{isotime `20060102-150405`}}",
+            "image_family": "{{user `image_name`}}-base",
+            "image_description": "{{user `image_description`}}",
+            "source_image_family": "{{user `source_image_family`}}",
+            "source_image_project_id": "{{user `source_image_project_id`}}",
+            "disk_size": "{{user `disk_size`}}",
+            "disk_type": "{{user `disk_type`}}",
+            "network": "{{user `network`}}",
+            "ssh_username": "appuser",
+            "tags": "{{user `tags`}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "{{template_dir}}/../scripts/install_mongodb.sh",
+            "execute_command": "sudo {{.Path}}"
+        }
+    ]
+}
