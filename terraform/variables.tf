@@ -24,3 +24,7 @@ variable db_disk_image {
   description = "Disk image family for reddit db"
   default     = "reddit-mongodb-base"
 }
+
+variable source_ranges {
+    description = "Networks allowed to connect to ssh"
+}
