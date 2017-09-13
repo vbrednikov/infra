@@ -26,5 +26,5 @@ variable db_disk_image {
 }
 
 variable source_ranges {
-    description = "Networks allowed to connect to ssh"
+  description = "Networks allowed to connect to ssh"
 }
