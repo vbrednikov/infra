@@ -20,7 +20,6 @@ variable app_disk_image {
   default     = "reddit-app-base"
 }
 
-
 variable db_disk_image {
   description = "Disk image family for reddit db"
   default     = "reddit-mongodb-base"
@@ -31,6 +30,6 @@ variable source_ranges {
 }
 
 variable network {
-    description="Network ID"
-    default="default"
+  description = "Network ID"
+  default     = "default"
 }

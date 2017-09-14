@@ -4,7 +4,6 @@ variable source_ranges {
 }
 
 variable network {
-    description="Network ID"
-    default = "default"
+  description = "Network ID"
+  default     = "default"
 }
-
