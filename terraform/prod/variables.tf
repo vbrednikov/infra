@@ -28,3 +28,8 @@ variable db_disk_image {
 variable source_ranges {
   description = "Networks allowed to connect to ssh"
 }
+
+variable network {
+    description="Network ID"
+    default="default"
+}

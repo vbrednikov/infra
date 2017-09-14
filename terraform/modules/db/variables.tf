@@ -6,3 +6,8 @@ variable db_disk_image {
   description = "Disk image family for reddit db"
   default     = "reddit-mongodb-base"
 }
+
+variable network {
+    description="Network ID"
+    default = "default"
+}

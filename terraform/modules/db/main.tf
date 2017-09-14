@@ -11,7 +11,7 @@ resource "google_compute_instance" "db" {
   }
 
   network_interface {
-    network = "default"
+    network = "${var.network}"
 
     access_config = {}
   }
@@ -22,8 +22,8 @@ resource "google_compute_instance" "db" {
 }
 
 resource "google_compute_firewall" "firewall_mongo" {
-  name    = "allow-mongo-default"
-  network = "default"
+  name    = "allow-mongo-${var.network}"
+  network = "${var.network}"
 
   allow {
     protocol = "tcp"
