@@ -47,11 +47,21 @@
       enabled: yes
       state: started
 
+- name: "Update system"
+  hosts: all
+  become: yes
+  tasks:
+  - name: update_cache
+    apt: update_cache=yes
+  - name: install aptitude
+    apt: name=aptitude state=present
+  - name: Upgrade packages
+    apt: upgrade=safe
+
 ## Deploy reddit app
 - name: "Reddit App: Deploy application"
   hosts: all
   gather_facts: no
-  become: yes
   tasks:
   - name: "Clone reddit-app from git repo"
     git:
@@ -62,6 +72,12 @@
     bundler:
       state: latest
       chdir: ~/reddit
+
+- name: "Reddit App: install service"
+  become: yes
+  gather_facts: no
+  hosts: all
+  tasks:
   - name: Install puma systemd service
     copy:
       src: ../terraform/files/puma.service
@@ -70,6 +86,7 @@
       owner: root
       group: root
   - name: Enable and start  puma systemd service
+    tags: systemd
     systemd:
       name: puma.service
       enabled: yes
