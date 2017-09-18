@@ -24,7 +24,7 @@ gcloud compute firewall-rules create default-puma-server2 --allow=tcp:9293 --des
 
 "Fry" the instance from base OS image using startup script. You will get an instance with ruby, mongodb and reddit app running on port 9292. Tested with Ubuntu 1604, probably will work with Debian.
 
-**Local** 
+**Local**
 
 The command below should be executed in the cloned infra repo.
 ```
@@ -74,7 +74,7 @@ gcloud compute instances create \
 
 ## Packer - complete image
 
-Bake the image with the application and all its dependencies installed. 
+Bake the image with the application and all its dependencies installed.
 No startup script is required since puma.service is started automatically.
 
 By default, it creates image of family reddit-app, instead of reddit-app-base, as in previous example.
@@ -95,12 +95,44 @@ gcloud compute instances create \
           reddit-app
 ```
 
-## Terraform
+## Packer - separate images
 
-1. [Download terraform binary for your OS](https://www.terraform.io/downloads.html)  and put it to any folder mentioned in your $PATH (e.g., ~/bin).
+In this variant MongoDB and Reddit-app are deployed on separate instances that should be deployed from packer-baked images reddit-mongodb-base and reddit-app-base. There are two similat configurations in terraform folder: prod and stage, with the same logic (except firewall) and different access configuration (in theory).
 
-2. Bake a reddit-app-base image using ubuntu16.json (see above)
+For production, firewall allow connections to tcp:22 (ssh) only from the IP (should be specified explicitly as `--var source_ranges="8.8.4.4/32") or in `terraform.tfvarsz. For staging, all connections to ssh are allowed.
 
-3. In the repo's `terraform` folder, copy terraform.tfvars.example to terraform.tfvars and set correct variables `project`, `disk_image` and key paths for your project.
+Make sure to run "terraform init" in each environment folder.
 
-4. In the `terraform` folder, run `terraform plan`, `terraform apply`.
+### Baking the images
+
+Run the commands simultaneously in different console windows:
+
+```
+project_id=$(gcloud info --format=flattened|grep config.project:|awk '{print $2}') ; \
+zone=$(gcloud info --format=flattened|grep config.properties.compute.zone:|awk '{print $2}') ; \
+packer build --var project_id=$project_id --var zone=${zone:-europe-west-1b} --var machine_type=f1-micro  packer/db.json
+```
+
+```
+project_id=$(gcloud info --format=flattened|grep config.project:|awk '{print $2}') ; \
+zone=$(gcloud info --format=flattened|grep config.properties.compute.zone:|awk '{print $2}') ; \
+packer build --var project_id=$project_id --var zone=${zone:-europe-west-1b} --var machine_type=f1-micro  packer/app.json
+```
+
+### Deploying the images with terraform
+
+```
+cd prod
+terraform plan
+terraform apply
+terraform destroy
+```
+
+## Shared terraform state with Gcloud
+
+In `prod` and `stage` terraform folders, there are backend-gcs.tf.example files. They contain example configurations for (Google Cloud Storage)[https://www.terraform.io/docs/backends/types/gcs.html] backend.
+
+1. copy the file to backend-gcs.tf in the same folder
+2. create a bucket in your project and in your region
+3. set variables in backend-gcs.tf according to your project's settings
+4. run `terraform init` to migrate current terraform.tfstate to the cloud

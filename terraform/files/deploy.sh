@@ -7,7 +7,7 @@ cd reddit
 bundle install
 
 sudo mv /tmp/puma.service /etc/systemd/system/puma.service
-chown 0:0 /etc/systemd/system/puma.service
-chmod 644 /etc/systemd/system/puma.service
+sudo chown 0:0 /etc/systemd/system/puma.service
+sudo chmod 644 /etc/systemd/system/puma.service
 sudo systemctl start puma
 sudo systemctl enable puma
