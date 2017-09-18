@@ -1,7 +1,7 @@
 terraform {
   backend "gcs" {
-    bucket  = "tf-state-vb"
+    bucket  = "bucket_name"
     path    = "terraform-prod.tfstate"
-    project = "infra-179411"
+    project = "project_id"
   }
 }

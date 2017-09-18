@@ -128,3 +128,11 @@ terraform apply
 terraform destroy
 ```
 
+## Shared terraform state with Gcloud
+
+In `prod` and `stage` terraform folders, there are backend-gcs.tf.example files. They contain example configurations for (Google Cloud Storage)[https://www.terraform.io/docs/backends/types/gcs.html] backend.
+
+1. copy the file to backend-gcs.tf in the same folder
+2. create a bucket in your project and in your region
+3. set variables in backend-gcs.tf according to your project's settings
+4. run `terraform init` to migrate current terraform.tfstate to the cloud
