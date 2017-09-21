@@ -1,0 +1,11 @@
+---
+- name: "Update system"
+  hosts: all
+  become: yes
+  tasks:
+  - name: update_cache
+    apt: update_cache=yes
+  - name: install aptitude
+    apt: name=aptitude state=present
+  - name: Upgrade packages
+    apt: upgrade=safe

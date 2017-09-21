@@ -8,16 +8,38 @@ There are several ways to start and deploy the instances:
 - using terraform
 - to be continued ...
 
+## Repo layout
+
+**ansible** contains ansible cookbooks to prepare environment for running reddit:
+- `ansible/reddit_app.yml`: installs ruby and bundler
+- `ansible/reddit_db.yml`: installs mongodb
+- `ansible/reddit.yml`: installs reddit application
+- `ansible/immutable.yml`: installs everything (including the application itself) on one vm
+- `ansible/os_update.yml`: does equivalent of apt-get update && apt-get upgrade
+
+These cookbooks are used by packer (see below) to bake correct images.
+
+**packer** dir contains packer configuration to prepare images in Google Cloud:
+- `packer/app.json` -- prepare image with ruby and bundler
+- `packer/db.json` -- image with mongodb
+- `packer/immutable.json` -- all-in-one image with deployed reddit app
+- `packer/ubuntu16.json` -- base image with ruby and mongo, without the app
+
+**terraform** dir contains terraform configuration and modules to start instances in Google Cloud:
+- `terraform/prod` -- production configuration
+- `terraform/stage` -- staging
+
 ## Prerequisites
 
 1. Google cloud account
 2. Google Cloud SDK (https://cloud.google.com/sdk/downloads)
 3. Packer (https://www.packer.io/downloads.html)
+4. Ansible
 
 The app uses TPC port 9292 for external comminucation, you need to open it in Google cloud firewall. In the examples below, network firewall tag "puma-server" is used to allow it. You can create this rule using the following command:
 
 ```
-gcloud compute firewall-rules create default-puma-server2 --allow=tcp:9293 --description="Reddit app on puma server" --direction=IN --network=default --target-tags=puma-server
+gcloud compute firewall-rules create default-puma-server2 --allow=tcp:9292 --description="Reddit app on puma server" --direction=IN --network=default --target-tags=puma-server
 ```
 
 ## Raw gcloud version

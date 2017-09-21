@@ -31,32 +31,9 @@
         }
     ],
     "provisioners": [
-        {
-            "type": "shell",
-            "script": "{{template_dir}}/../scripts/install_ruby.sh"
-        },
-        {
-            "type": "shell",
-            "script": "{{template_dir}}/../scripts/install_mongodb.sh",
-            "execute_command": "sudo {{.Path}}"
-        },
-        {
-            "type": "shell",
-            "script": "{{template_dir}}/../scripts/install_app.sh"
-        },
-        {
-            "type": "file",
-            "source": "{{template_dir}}/../files/puma.service",
-            "destination": "/home/appuser/puma.service"
-        },
-        {
-            "type": "shell",
-            "inline": [
-                "sudo mv /home/appuser/puma.service /etc/systemd/system/puma.service", 
-                "sudo chmod 644 /etc/systemd/system/puma.service", 
-                "sudo chown 0:0 /etc/systemd/system/puma.service",
-                "sudo systemctl enable puma.service"
-            ]
-        }
+		{
+		  "type": "ansible",
+		  "playbook_file": "../ansible/immutable.yml"
+		}
     ]
 }
