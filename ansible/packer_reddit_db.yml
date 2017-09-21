@@ -27,6 +27,4 @@
     systemd:
       name: mongod.service
       enabled: yes
-      state: started
-
 
