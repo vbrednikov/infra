@@ -10,7 +10,7 @@
         "disk_type": "pd-standard",
         "network": "default",
         "image_description": "Packer-baked image with reddit-app installed",
-        "tags":"reddit-apponly-base"
+        "tags":"reddit-app-base"
     },
     "builders": [
         {
