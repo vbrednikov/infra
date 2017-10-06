@@ -4,12 +4,14 @@
   hosts: all
   gather_facts: no
   tasks:
+
   - name: "Clone reddit-app from git repo"
     git:
       repo: https://github.com/Artemmkin/reddit.git
       dest: ~/reddit
       force: yes
-  - name: install dependencies to run app
+
+  - name: Install dependencies to run app
     bundler:
       state: latest
       chdir: ~/reddit
@@ -19,6 +21,7 @@
   gather_facts: no
   hosts: all
   tasks:
+
   - name: Install puma systemd service
     copy:
       src: ../terraform/files/puma.service
@@ -26,6 +29,7 @@
       mode: 644
       owner: root
       group: root
+
   - name: Enable and start  puma systemd service
     tags: systemd
     systemd:

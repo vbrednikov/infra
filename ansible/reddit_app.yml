@@ -5,6 +5,7 @@
     mongo_bind_ip: 0.0.0.0
     db_host: 10.132.0.2
   tasks:
+
     - name: Change mongo config file
       become: true
       template:
@@ -13,6 +14,7 @@
         mode: 0644
       tags: db-tag
       notify: restart mongod
+
     - name: Add unit file for Puma
       become: true
       copy:
@@ -20,15 +22,18 @@
         dest: /etc/systemd/system/puma.service
       tags: app-tag
       notify: reload puma
+
     - name: Add config for DB connection
       template:
         src: templates/db_config.j2
         dest: /home/appuser/db_config
       tags: app-tag
+
     - name: enable puma
       become: true
       systemd: name=puma enabled=yes
       tags: app-tag
+
     - name: Fetch the latest version of application code
       git:
         repo: 'https://github.com/Artemmkin/reddit.git'
@@ -36,6 +41,7 @@
         #version: monolith
       tags: deploy-tag
       notify: restart puma
+
     - name: Bundle install
       bundler:
         state: present
