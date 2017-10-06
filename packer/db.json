@@ -33,7 +33,7 @@
     "provisioners": [
 		{
 		  "type": "ansible",
-		  "playbook_file": "../ansible/reddit_db.yml"
+		  "playbook_file": "{{template_dir}}/../ansible/packer_reddit_db.yml"
 		}
     ]
 }

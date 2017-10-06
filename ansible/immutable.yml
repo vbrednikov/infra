@@ -1,5 +1,5 @@
 ---
+- include: packer_reddit_db.yml
+- include: packer_reddit_app.yml
 - include: os_update.yml
-- include: reddit_db.yml
-- include: reddit_app.yml
 - include: reddit.yml
