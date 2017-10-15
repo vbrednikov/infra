@@ -4,27 +4,7 @@
   hosts: reddit-app
   become: true
   vars:
-    mongo_bind_ip: 0.0.0.0
     db_host: 10.132.0.2
- 
-  tasks:
-    - name: Add unit file for Puma
-      copy:
-        src: files/puma.service
-        dest: /etc/systemd/system/puma.service
-      notify: reload puma
-
-    - name: Add config for DB connection
-      template:
-        src: templates/db_config.j2
-        dest: /home/appuser/db_config
-        owner: appuser
-        group: appuser
-
-    - name: enable puma
-      systemd: name=puma enabled=yes
-
-  handlers:
-    - name: reload puma
-      become: true
-      systemd: name=puma state=reloaded
+  roles:
+    - app 
+  
