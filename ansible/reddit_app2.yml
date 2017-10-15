@@ -11,11 +11,11 @@
         src: templates/mongod.conf.j2
         dest: /etc/mongod.conf
         mode: 0644
-
+      notify: restart mongod
   handlers:
     - name: restart mongod
       become: true
-      service: name=mongod start=
+      service: name=mongod state=restarted
 
 - name: Configure app
   hosts: reddit-app
@@ -42,6 +42,22 @@
     - name: reload puma
       become: true
       systemd: name=puma state=reloaded
+
+- name: Deploy app
+  hosts: reddit-app
+  tags: deploy-tag
+  tasks:
+    - name: Fetch the latest version of application code
+      git:
+        repo: 'https://github.com/Artemmkin/reddit.git'
+        dest: /home/appuser/reddit
+      notify: restart puma
+
+    - name: Bundle install
+      bundler:
+        state: present
+        chdir: /home/appuser/reddit
+  handlers:
     - name: restart puma
       become: true
       systemd: name=puma state=restarted
