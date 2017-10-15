@@ -199,10 +199,10 @@ Some configuration steps are left for ansible:
 1. Add systemd `puma.service` file
 2. Deploy `reddit-app` from git
 3. Configure mongodb IP for reddit-app
-4. Configure mongodb to listen on private port 
+4. Configure mongodb to listen on TCP port 
 
 
-This is done with `ansible/reddit_app.yml` playbook. Steps to use it:
+This is done with `ansible/site.yml` playbook that includes mini-playbooks  `db.yml`, `app.yml` and `deploy.yml`. Db and app playbooks call appropriate roles defined in ansible/roles directory. Steps to use it:
 
 ### Configure GCE backend
 
@@ -221,10 +221,57 @@ See official [Google Cloud Platform Guide](http://docs.ansible.com/ansible/lates
   - `gce_service_account_pem_file_path`: full path to `~/ansible_gce/inventory.pem`
   - `gce_project_id`: google cloud ID of your project
 5. chmod +x ./gce.py and run it as `./gce.py --list --pretty`. If everything is done correctly, json-formatted data about your environment will be printed.
+6. Run `ansible-playbook --options -i /path/to/gce.py playbook.yml` to use this inventory
 
-### Run playbook
+
+
+### DEPRECATED: Tagged tasks and hosts
 
 ```
-ansible-playbook --limit reddit-app --tags deploy-tag,app-tag -i ./gce.py reddit_app.yml
-ansible-playbook --limit reddit-db --tags db-tag -i ./gce.py reddit_app.yml
+ansible-playbook --limit reddit-app --tags deploy-tag,app-tag -i ./gce.py reddit_app_one_play.yml
+ansible-playbook --limit reddit-db --tags db-tag -i ./gce.py reddit_app_one_play.yml
 ```
+
+### DEPRECATED: Multiple scenarios
+
+```
+ansible-playbook --tags db-tag -i ./gce.py reddit_app_one_play.yml --check
+ansible-playbook --tags db-tag -i ./gce.py reddit_app_one_play.yml
+
+ansible-playbook --tags deploy-tag  -i ./gce.py reddit_app_one_play.yml --check
+ansible-playbook --tags deploy-tag  -i ./gce.py reddit_app_one_play.yml
+
+
+ansible-playbook --tags app-tag  -i ./gce.py reddit_app_one_play.yml --check
+ansible-playbook --tags app-tag  -i ./gce.py reddit_app_one_play.yml
+
+```
+
+### Role-based deployment
+
+This method uses environments: `environments/stage` and `environments/prod` with potentially different variables.  There are two ways to use the environmnets:
+
+1. Explicitly specify hosts in `environments/stage/hosts` file in the following format:
+```
+reddit-app ansible_ssh_host=35.195.230.125 ansible_ssh_user=appuser
+reddit-db  ansible_ssh_host=35.195.41.25 ansible_ssh_user=appuser
+ansible_ssh_private_key_file=~/.ssh/appuser
+```
+
+Use this file as follows:
+
+```
+ansible-playbook -i environments/stage/hosts site.yml
+```
+
+2. Copy `gce.py` and `gce.ini` to each `environments/stage` and `environments/prod`. Edit project id and other settings in each gce.ini according to your realities.
+
+Use this inventory as follows:
+
+
+```
+ansible-playbook -i environments/stage/gce.py site.yml --check
+ansible-playbook -i environments/stage/gce.py site.yml
+
+```
+To switch between environments, use the following commang
