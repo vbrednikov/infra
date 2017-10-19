@@ -274,4 +274,3 @@ ansible-playbook -i environments/stage/gce.py site.yml --check
 ansible-playbook -i environments/stage/gce.py site.yml
 
 ```
-To switch between environments, use the following commang
