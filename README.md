@@ -1,6 +1,6 @@
 # Reddit-app infrastructure
 
-This set of scripts and configurations is attended to run sample ruby application https://github.com/Artemmkin/reddit in Google Cloud. 
+This set of scripts and configurations is attended to run sample ruby application https://github.com/Artemmkin/reddit in Google Cloud.
 
 The application arhitecture supposes at least two instances: mongodb server and application server with ruby and rails. Application listens on  HTTP port 9292.
 
@@ -34,8 +34,8 @@ Basic steps are:
   - **`ansible/packer_reddit_app.yml`**: installs ruby and bundler, for use with packer
   - **`ansible/packer_reddit_db.yml`**: installs mongodb, for use with packer
   - **`ansible/reddit_app.yml`**: puts configuration files in place, deploys and starts application
-- Additional:  
-  - `ansible/reddit.yml`: simple playbook to deploy and start reddit application 
+- Additional:
+  - `ansible/reddit.yml`: simple playbook to deploy and start reddit application
   - `ansible/immutable.yml`: installs everything (including the application itself) on one vm
   - `ansible/os_update.yml`: does equivalent of apt-get update && apt-get upgrade
 
@@ -43,10 +43,10 @@ Basic steps are:
 ## Prerequisites
 
 1. [Google Cloud free account](https://console.cloud.google.com/freetrial)
-2. [Google Cloud SDK](https://cloud.google.com/sdk/downloads), installed, added to `$PATH` and authorized 
+2. [Google Cloud SDK](https://cloud.google.com/sdk/downloads), installed, added to `$PATH` and authorized
     - [prerequisites and installation](https://cloud.google.com/sdk/docs/)
 3. [Packer binary](https://www.packer.io/downloads.html) in `$PATH`
-4. [Terraform binary](https://www.terraform.io/downloads.html) in `$PATH` 
+4. [Terraform binary](https://www.terraform.io/downloads.html) in `$PATH`
 5. Ansible 2.3.2, libcloud:
    ```
    pip install ansible==2.3.2
@@ -56,7 +56,7 @@ Basic steps are:
 > During manipulations with terraform, default ssh rule can be dropped, but it is still required to prepare base images with packer. Use the following cmdline to restore:
 >
 > ```
->  gcloud compute firewall-rules create default-ssh2 --allow=tcp:22 --description="Allow SSH access" --direction=IN --network=default 
+>  gcloud compute firewall-rules create default-ssh2 --allow=tcp:22 --description="Allow SSH access" --direction=IN --network=default
 > ```
 
 ## Fried instances
@@ -71,7 +71,7 @@ Project ID and zone from default gcloud settings are used.
 
 1. Enable access to SSH (TCP:22) and web (TCP:9292)
 ```
-gcloud compute firewall-rules create default-ssh2 --allow=tcp:22 --description="Allow SSH access" --direction=IN --network=default 
+gcloud compute firewall-rules create default-ssh2 --allow=tcp:22 --description="Allow SSH access" --direction=IN --network=default
 gcloud compute firewall-rules create default-puma-server --allow=tcp:9292 --description="Allow access to web app" --direction=IN --network=default --target-tags=puma-server
 ```
 2. Add appuser's public key to Compute Engine/Metadata in console. It is also possible to use gcloud for this task, see [Adding and removing SSH keys](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys) for details.
@@ -144,7 +144,7 @@ Make sure that reddit-app is reachable via http://reddit-ip:9292.
 
 ## Packer - separate images
 
-In this variant MongoDB and Reddit-app are deployed on separate instances that should be deployed from packer-baked images of families **reddit-mongodb-base** and **reddit-app-base**. 
+In this variant MongoDB and Reddit-app are deployed on separate instances that should be deployed from packer-baked images of families **reddit-mongodb-base** and **reddit-app-base**.
 
 ### Baking the images
 
@@ -170,7 +170,7 @@ For production, firewall allows connections to tcp:22 (ssh) only from the  IP sp
 
 Make sure to run "terraform init" in each environment folder.
 
-1. In `prod` and `stage` folders, copy terraform.tfvars.example to terraform.tfvars and fill with your project's settings. 
+1. In `prod` and `stage` folders, copy terraform.tfvars.example to terraform.tfvars and fill with your project's settings.
 2. Configure shared state, if needed (see the section below)
 2. Review `variables.tf`, edit, if needed
 
@@ -199,20 +199,20 @@ Some configuration steps are left for ansible:
 1. Add systemd `puma.service` file
 2. Deploy `reddit-app` from git
 3. Configure mongodb IP for reddit-app
-4. Configure mongodb to listen on private port 
+4. Configure mongodb to listen on TCP port
 
 
-This is done with `ansible/reddit_app.yml` playbook. Steps to use it:
+This is done with `ansible/site.yml` playbook that includes mini-playbooks  `db.yml`, `app.yml` and `deploy.yml`. Db and app playbooks call appropriate roles defined in ansible/roles directory. Steps to use it:
 
 ### Configure GCE backend
 
 See official [Google Cloud Platform Guide](http://docs.ansible.com/ansible/latest/guide_gce.html) for details on configuring access to GCE. In short, steps are:
 
 1. Download [gce.py](https://github.com/ansible/ansible/blob/devel/contrib/inventory/gce.py) and [gce.ini](https://github.com/ansible/ansible/blob/devel/contrib/inventory/gce.ini) from [ansible contrib inventory folder](https://github.com/ansible/ansible/blob/devel/contrib/inventory/).
-2. In [Google cloud IAM service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts/project) for your project, create an account named "inventory" with role "Project viewer". 
+2. In [Google cloud IAM service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts/project) for your project, create an account named "inventory" with role "Project viewer".
   - write down Service Account ID (e.g., `inventory@infra-XXXXXX.iam.gserviceaccount.com`)
   - enable checkbox "Furnish a new private key", select "JSON" format
-3. Open downloaded json file in any text editor, 
+3. Open downloaded json file in any text editor,
   - extract value of private key (from "-----BEGIN PRIVATE KEY-----" till "-----END PRIVATE KEY-----" to new file named `~/ansible_gce/inventory.pem`
   - replace `\n` string with newlines
   - save the file
@@ -221,10 +221,56 @@ See official [Google Cloud Platform Guide](http://docs.ansible.com/ansible/lates
   - `gce_service_account_pem_file_path`: full path to `~/ansible_gce/inventory.pem`
   - `gce_project_id`: google cloud ID of your project
 5. chmod +x ./gce.py and run it as `./gce.py --list --pretty`. If everything is done correctly, json-formatted data about your environment will be printed.
+6. Run `ansible-playbook --options -i /path/to/gce.py playbook.yml` to use this inventory
 
-### Run playbook
+
+
+### DEPRECATED: Tagged tasks and hosts
 
 ```
-ansible-playbook --limit reddit-app --tags deploy-tag,app-tag -i ./gce.py reddit_app.yml
-ansible-playbook --limit reddit-db --tags db-tag -i ./gce.py reddit_app.yml
+ansible-playbook --limit reddit-app --tags deploy-tag,app-tag -i ./gce.py reddit_app_one_play.yml
+ansible-playbook --limit reddit-db --tags db-tag -i ./gce.py reddit_app_one_play.yml
+```
+
+### DEPRECATED: Multiple scenarios
+
+```
+ansible-playbook --tags db-tag -i ./gce.py reddit_app_one_play.yml --check
+ansible-playbook --tags db-tag -i ./gce.py reddit_app_one_play.yml
+
+ansible-playbook --tags deploy-tag  -i ./gce.py reddit_app_one_play.yml --check
+ansible-playbook --tags deploy-tag  -i ./gce.py reddit_app_one_play.yml
+
+
+ansible-playbook --tags app-tag  -i ./gce.py reddit_app_one_play.yml --check
+ansible-playbook --tags app-tag  -i ./gce.py reddit_app_one_play.yml
+
+```
+
+### Role-based deployment
+
+This method uses environments: `environments/stage` and `environments/prod` with potentially different variables.  There are two ways to use the environmnets:
+
+1. Explicitly specify hosts in `environments/stage/hosts` file in the following format:
+```
+reddit-app ansible_ssh_host=35.195.230.125 ansible_ssh_user=appuser
+reddit-db  ansible_ssh_host=35.195.41.25 ansible_ssh_user=appuser
+ansible_ssh_private_key_file=~/.ssh/appuser
+```
+
+Use this file as follows:
+
+```
+ansible-playbook -i environments/stage/hosts site.yml
+```
+
+2. Copy `gce.py` and `gce.ini` to each `environments/stage` and `environments/prod`. Edit project id and other settings in each gce.ini according to your realities.
+
+Use this inventory as follows:
+
+
+```
+ansible-playbook -i environments/stage/gce.py site.yml --check
+ansible-playbook -i environments/stage/gce.py site.yml
+
 ```

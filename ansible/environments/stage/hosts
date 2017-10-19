@@ -1,0 +1,3 @@
+reddit-app ansible_ssh_host=35.195.230.125 ansible_ssh_user=appuser
+reddit-db  ansible_ssh_host=35.195.41.25 ansible_ssh_user=appuser
+ansible_ssh_private_key_file=~/.ssh/appuser

@@ -6,10 +6,10 @@
 
 set -e
 
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 
-echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.2.list 
-apt-get -y update 
-apt-get upgrade -y 
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.2.list
+apt-get -y update
+apt-get upgrade -y
 
 # install ruby for appuser
 echo '--------- Install ruby -------------'
@@ -24,9 +24,9 @@ sudo -u "appuser" bash -c 'gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B
 sudo -u "appuser" bash -c '. ~/.rvm/scripts/rvm; echo -n Ruby version:\ ; ruby -v; echo -n Bundler version:\ ; bundle -v'
 
 echo '--------- Install mongodb ----------'
-apt-get install -y mongodb-org 
-systemctl enable mongod 
-systemctl start mongod 
+apt-get install -y mongodb-org
+systemctl enable mongod
+systemctl start mongod
 systemctl status mongod
 
 echo '--------- Deploy reddit app --------'
