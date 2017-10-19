@@ -4,5 +4,5 @@
   hosts: reddit-app
   become: true
   roles:
-    - app 
-  
+    - app
+
