@@ -21,6 +21,13 @@ Vagrant.configure("2") do |config|
     app.vm.box = "ubuntu/xenial64"
     app.vm.hostname = "appserver"
     app.vm.network :private_network, ip: "10.10.10.20"
+    app.vm.provision "ansible" do |ansible|
+      ansible.playbook = "site.yml"
+      ansible.groups = {
+        "reddit-app" => ["appserver"],
+        "reddit-app:vars" => { "db_host" => "10.10.10.10" }
+      }
+    end
   end
 end
 
