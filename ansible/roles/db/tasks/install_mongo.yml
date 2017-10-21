@@ -1,0 +1,28 @@
+---
+- name: Import apt key for MongoDB repo
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: EA312927
+    state: present
+  tags: install
+
+- name: Install mongodb app repo
+  apt_repository:
+    repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
+    state: present
+    filename: mongodb-org-3.2
+  tags: install
+
+- name: Install mongodb package
+  apt:
+    update_cache: yes
+    name: mongodb-org
+  tags: install
+
+- name: Enable and start mongodb service
+  systemd:
+    name: mongod.service
+    enabled: yes
+    state: started
+  tags: install
+
