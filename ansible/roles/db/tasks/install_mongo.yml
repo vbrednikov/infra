@@ -19,10 +19,9 @@
     name: mongodb-org
   tags: install
 
-- name: Enable and start mongodb service
+- name: Enable mongodb service
   systemd:
     name: mongod.service
     enabled: yes
-    state: started
   tags: install
 

@@ -31,9 +31,11 @@
         }
     ],
     "provisioners": [
-		{
-		  "type": "ansible",
-		  "playbook_file": "{{template_dir}}/../ansible/packer_reddit_db.yml"
-		}
+        {
+          "type": "ansible",
+          "playbook_file": "{{template_dir}}/../ansible/site.yml",
+          "extra_arguments": ["--tags=install"],
+          "groups": "reddit-db"
+        }
     ]
 }
