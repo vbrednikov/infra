@@ -1,0 +1,6 @@
+- name: Start mongodb service
+  systemd:
+    name: mongod.service
+    enabled: yes
+    state: started
+  tags: start
